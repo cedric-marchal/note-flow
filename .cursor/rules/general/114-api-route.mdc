@@ -1,0 +1,196 @@
+---
+description: EXPLAIN how to use API Route in our project
+globs: **/route.ts
+alwaysApply: false
+---
+## Context
+
+* API Route in NextJS enable developer to create API Endpoint to make GET / POST / PATCH / PUT / DELETE request
+* We use standard Next.js API routes with proper error handling and validation.
+* All routes should follow the pattern shown in the sign-up example with try-catch blocks and proper error handling.
+* Each JSON and FormData input must be validated using dedicated Zod schemas in `/lib/validations/` files.
+
+## Validation Schema Example
+
+```ts
+// /lib/validations/auth.ts
+
+import { z } from "zod";
+
+export const SignUpSchema = z.object({
+  username: z
+    .string()
+    .min(3, "Username must be at least 3 characters long")
+    .max(20, "Username must be less than 20 characters")
+    .regex(/^[\p{L}]+$/u, "Username must contain letters only"),
+  firstName: z
+    .string()
+    .min(3, "First name must be at least 3 characters long")
+    .max(20, "First name must be less than 20 characters")
+    .regex(/^[\p{L}]+$/u, "First name must contain letters only"),
+  lastName: z
+    .string()
+    .min(3, "Last name must be at least 3 characters long")
+    .max(20, "Last name must be less than 20 characters")
+    .regex(/^[\p{L}]+$/u, "Last name must contain letters only"),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .min(1, "Email address is required")
+    .max(255, "Email address must be less than 255 characters"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .max(255, "Password must be less than 255 characters"),
+});
+
+export type SignUpSchemaType = z.infer<typeof SignUpSchema>;
+```
+
+## Example : Sign Up Route
+
+```ts
+// /app/api/auth/sign-up/route.ts
+
+import { prisma } from "@/src/lib/prisma";
+import { SignUpSchema } from "@/src/lib/validations/auth";
+
+import bcrypt from "bcryptjs";
+
+import {
+  BadRequestError,
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+  TooManyRequestsError,
+  UnauthorizedError,
+  handleApiError,
+} from "@/src/utils/api/handle-api-error";
+
+import { NextRequest, NextResponse } from "next/server";
+
+import { stripe } from "@/src/lib/stripe";
+
+import { auth } from "@/src/lib/auth";
+import { slugify } from "@/src/utils/string/slugify";
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (session) {
+      throw new UnauthorizedError("You are already logged in");
+    }
+
+    const formData = await request.formData();
+
+    const signUpBody = SignUpSchema.parse({
+      username: formData.get("username"),
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
+
+    const slug = slugify(signUpBody.username);
+
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: signUpBody.email },
+          { username: signUpBody.username },
+          { slug },
+        ],
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (existingUser) {
+      throw new ConflictError(
+        "An account already exists with this email address or username"
+      );
+    }
+
+    const stripeCustomerExists = await stripe.customers.search({
+      query: `email:'${signUpBody.email}'`,
+    });
+
+    if (stripeCustomerExists.data.length > 0) {
+      throw new ConflictError("An account already exists with this email address");
+    }
+
+    const hashedPassword = await bcrypt.hash(signUpBody.password, 12);
+
+    const stripeCustomer = await stripe.customers.create({
+      email: signUpBody.email,
+      name: signUpBody.username,
+    });
+
+    if (!stripeCustomer) {
+      throw new BadRequestError(
+        "An error occurred while creating your account"
+      );
+    }
+
+    const user = await prisma.user.create({
+      data: {
+        username: signUpBody.username,
+        slug,
+        firstName: signUpBody.firstName,
+        lastName: signUpBody.lastName,
+        email: signUpBody.email,
+        hashedPassword,
+        stripeCustomerId: stripeCustomer.id,
+      },
+      select: {
+        username: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestError(
+        "An error occurred while creating your account"
+      );
+    }
+
+    return NextResponse.json(user, { status: 201 });
+  } catch (error: unknown) {
+    return handleApiError(error);
+  }
+}
+```
+
+## Rules
+
+- Always wrap API route handlers in try-catch blocks
+- Use `handleApiError(error)` to handle all errors consistently
+- **All JSON and FormData inputs must be validated using Zod schemas from `/lib/validations/` files**
+- Create dedicated validation files (e.g., `/lib/validations/auth.ts`) to share schemas between frontend and backend
+- Always export both the schema and its TypeScript type using `z.infer<typeof Schema>`
+- Parse request data using `Schema.parse()` for validation
+- Use specific error types: `BadRequestError`, `ConflictError`, `ForbiddenError`, `NotFoundError`, `TooManyRequestsError`, `UnauthorizedError`
+- Always check authentication with `await auth()` when required
+- Use `NextRequest` and `NextResponse` types
+- Return JSON responses with appropriate status codes
+
+## Available Error Types
+
+- `BadRequestError` - 400 Bad Request
+- `UnauthorizedError` - 401 Unauthorized
+- `ForbiddenError` - 403 Forbidden
+- `NotFoundError` - 404 Not Found
+- `ConflictError` - 409 Conflict
+- `TooManyRequestsError` - 429 Too Many Requests
+- `ZodError` - 400 Validation Error (automatically handled by `handleApiError`)
+
+## Validation File Structure
+
+- `/lib/validations/auth.ts` - Authentication related schemas
+- `/lib/validations/user.ts` - User related schemas
+- `/lib/validations/organization.ts` - Organization related schemas
+- Each validation file should export both schemas and their TypeScript types
