@@ -10,8 +10,10 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <main className="container mx-auto py-8 px-4">
-      <DashboardContent />
-    </main>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      <main className="container mx-auto py-8 px-4 space-y-8">
+        <DashboardContent />
+      </main>
+    </div>
   );
 }

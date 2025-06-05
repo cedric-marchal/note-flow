@@ -1,22 +1,21 @@
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
+  AlertTriangle,
   ArrowLeft,
   FileText,
-  FileX,
   Home,
   Search,
   Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function NotFoundPage() {
   const suggestions = [
     {
       icon: Home,
       title: "Go Home",
-      description: "Return to homepage",
+      description: "Return to the homepage",
       href: "/",
       primary: true,
     },
@@ -30,7 +29,7 @@ export default function NotFoundPage() {
     {
       icon: Search,
       title: "Search",
-      description: "Find other content",
+      description: "Find what you're looking for",
       href: "/#features",
       primary: false,
     },
@@ -42,32 +41,32 @@ export default function NotFoundPage() {
         <div className="max-w-2xl mx-auto text-center">
           {/* Error illustration */}
           <div className="relative mb-12">
-            <div className="w-32 h-32 bg-gradient-to-br from-red-100 to-orange-100 rounded-3xl flex items-center justify-center mx-auto mb-6 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-orange-500/10" />
-              <FileX className="h-16 w-16 text-slate-400" />
+            <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-6 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10" />
+              <AlertTriangle className="h-16 w-16 text-slate-400" />
 
               {/* Floating elements */}
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-200 rounded-full opacity-60" />
-              <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-orange-200 rounded-full opacity-40" />
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-200 rounded-full opacity-60" />
+              <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-purple-200 rounded-full opacity-40" />
             </div>
 
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="h-5 w-5 text-red-500" />
-              <span className="text-5xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-                Note Not Found
+              <Sparkles className="h-5 w-5 text-blue-500" />
+              <span className="text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                404
               </span>
-              <Sparkles className="h-5 w-5 text-orange-500" />
+              <Sparkles className="h-5 w-5 text-purple-500" />
             </div>
           </div>
 
           {/* Content */}
           <div className="space-y-6 mb-12">
-            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight">
-              This note doesn't exist
+            <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 leading-tight">
+              Oops! Page not found
             </h1>
             <p className="text-xl text-slate-600 leading-relaxed max-w-lg mx-auto">
-              The note you're looking for doesn't exist, has been deleted, or is
-              not publicly available.
+              The page you're looking for doesn't exist or has been moved. Let's
+              get you back on track.
             </p>
           </div>
 
@@ -139,20 +138,14 @@ export default function NotFoundPage() {
           {/* Help section */}
           <div className="mt-16 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-lg shadow-slate-200/50">
             <h3 className="font-semibold text-slate-900 mb-2">
-              Looking for something specific?
+              Still need help?
             </h3>
             <p className="text-slate-600 text-sm mb-4">
-              Try browsing our public notes or create your own account to start
-              writing.
+              If you believe this is an error, please contact our support team.
             </p>
-            <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/dashboard">Browse Notes</Link>
-              </Button>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/sign-in">Sign In</Link>
-              </Button>
-            </div>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/contact">Contact Support</Link>
+            </Button>
           </div>
         </div>
       </div>

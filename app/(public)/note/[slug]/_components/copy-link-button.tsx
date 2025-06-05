@@ -34,17 +34,17 @@ export const CopyLinkButton = ({ slug }: CopyLinkButtonProps) => {
       variant="outline"
       size="sm"
       onClick={handleCopyLink}
-      className="flex items-center gap-2 cursor-pointer"
+      className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
     >
       {isCopied ? (
         <>
           <Check className="h-4 w-4 text-green-600" />
-          Copied!
+          <span className="text-green-600 font-medium">Copied!</span>
         </>
       ) : (
         <>
-          <Share className="h-4 w-4" />
-          Share
+          <Share className="h-4 w-4 text-slate-600" />
+          <span className="text-slate-700">Share</span>
         </>
       )}
     </Button>
