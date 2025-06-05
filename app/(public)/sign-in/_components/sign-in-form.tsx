@@ -70,7 +70,7 @@ export const SignInForm = () => {
 
       <div className="text-center">
         <p className="text-sm text-slate-600">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <span className="text-slate-900 font-medium">
             Sign in with GitHub to get started instantly
           </span>

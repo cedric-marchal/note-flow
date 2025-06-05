@@ -78,7 +78,7 @@ export const DeleteNoteModal = ({
           <AlertDialogDescription className="text-slate-600 text-base leading-relaxed">
             This action cannot be undone. This will permanently delete
             <span className="font-semibold text-slate-900 mx-1">
-              "{note.title}"
+              &ldquo;{note.title}&rdquo;
             </span>
             and remove it from our servers.
           </AlertDialogDescription>

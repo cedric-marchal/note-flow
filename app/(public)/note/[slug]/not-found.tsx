@@ -63,11 +63,11 @@ export default function NotFoundPage() {
           {/* Content */}
           <div className="space-y-6 mb-12">
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight">
-              This note doesn't exist
+              This note doesn&apos;t exist
             </h1>
             <p className="text-xl text-slate-600 leading-relaxed max-w-lg mx-auto">
-              The note you're looking for doesn't exist, has been deleted, or is
-              not publicly available.
+              The note you&apos;re looking for doesn&apos;t exist, has been
+              deleted, or is not publicly available.
             </p>
           </div>
 

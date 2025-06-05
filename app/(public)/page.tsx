@@ -195,7 +195,7 @@ export default async function HomePage() {
                     </h4>
                     <p className="text-slate-600">
                       Intelligent tagging and search capabilities help you find
-                      exactly what you're looking for, when you need it.
+                      exactly what you&apos;re looking for, when you need it.
                     </p>
                   </div>
                 </div>

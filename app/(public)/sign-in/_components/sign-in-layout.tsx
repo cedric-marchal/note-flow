@@ -93,8 +93,8 @@ export const SignInLayout = ({ children }: SignInLayoutProps) => {
                 <span className="font-medium">Trusted by 10,000+ users</span>
               </div>
               <p className="text-sm text-blue-100">
-                "NoteFlow has completely transformed how I organize my thoughts
-                and collaborate with my team."
+                &ldquo;NoteFlow has completely transformed how I organize my
+                thoughts and collaborate with my team.&rdquo;
               </p>
             </div>
           </div>
